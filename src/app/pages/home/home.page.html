@@ -1,0 +1,75 @@
+<layout>
+    <div class="home">
+        <mat-card class="profits-card">
+            <mat-card-header>
+                <mat-card-title> Profits </mat-card-title>
+                <mat-card-subtitle>3 commas ({{(data$ | async).length}})</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <mat-list>
+                    <mat-list-item *ngFor="let profit of profits$ | async">
+                        <mat-icon mat-list-icon>
+                            <div class="mat-card-avatar" [ngStyle]="{
+                                'background-image': 'url(' + ICON_URL + profit.key + ')',
+                                'background-size': 'cover',
+                                'width': '32px',
+                                'height': '32px'
+                            }"></div>
+                        </mat-icon>
+                        
+                        <div mat-line> {{profit.value | number:'1.0-8'}} </div>
+                        <div mat-line>{{profit.key}}</div>
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+            <!-- <mat-card-actions>
+                <button mat-button>LIKE</button>
+                <button mat-button>SHARE</button>
+            </mat-card-actions> -->
+        </mat-card>
+    
+        <div class="container">
+            <mat-card class="controls" [formGroup]="filters">
+                <mat-form-field appearance="fill">
+                    <mat-label>Enter a date range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                      <input matStartDate formControlName="start" placeholder="Start date">
+                      <input matEndDate formControlName="end" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                  
+                    <mat-error *ngIf="filters.controls['start'].hasError('matStartDateInvalid')">Invalid start date</mat-error>
+                    <mat-error *ngIf="filters.controls['end'].hasError('matEndDateInvalid')">Invalid end date</mat-error>
+                </mat-form-field>
+    
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"(click)="resetValue({ start: null, end: null })">
+                    <mat-icon>clear</mat-icon>
+                </button>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Bot</mat-label>
+                    <mat-select formControlName="bots" multiple>
+                      <mat-option *ngFor="let bot of bots$ | async" [value]="bot.id">{{ bot.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon" (click)="resetValue({ bots: [] })">
+                    <mat-icon>clear</mat-icon>
+                </button>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>Coin</mat-label>
+                    <mat-select formControlName="coins" multiple>
+                      <mat-option *ngFor="let coin of coins$ | async" [value]="coin">{{ coin }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon" (click)="resetValue({ coins: [] })">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </mat-card>
+            <mat-card class="stats">
+                at some point here will be some stats
+            </mat-card>
+        </div>
+    </div>
+</layout>

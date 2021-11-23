@@ -1,0 +1,26 @@
+home:host {
+    height: 100%;
+    display: block;
+    // padding: 10px;
+}
+
+.home {
+    display: flex;
+    height: 100%;
+
+    .profits-card {
+        height: 100%;
+        width: 300px;
+        overflow-y: auto;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        padding-left: 10px;
+        width: 100%;
+
+        mat-card {
+            margin-bottom: 10px;
+        }
+    }
+}

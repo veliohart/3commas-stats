@@ -1,0 +1,31 @@
+.accounts-table {
+    width: 100%;
+}
+
+@mixin col-width($pct) {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 $pct !important;
+    width: $pct !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+
+    word-break: break-word;
+
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.mat-column-name {
+    @include col-width(15%);
+}
+
+.mat-column-key {
+    @include col-width(20%);
+}
+
+.mat-column-secret {
+    @include col-width(65%);
+}
