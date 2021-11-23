@@ -4,7 +4,7 @@ import * as Hex from 'crypto-js/enc-hex';
 import { HttpClient } from "@angular/common/http";
 import Big from 'big.js';
 import * as dayjs from "dayjs";
-import { map, mergeMap, share, shareReplay, startWith, switchMap, tap } from "rxjs/operators";
+import { filter, map, mergeMap, share, shareReplay, startWith, switchMap, tap } from "rxjs/operators";
 import { combineLatest, Observable, of } from "rxjs";
 import { Tile } from "@angular/material/grid-list/tile-coordinator";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -67,6 +67,7 @@ export class HomePage implements OnInit {
 
     filters$ = this.filters.valueChanges.pipe(shareReplay());
     allData$ = this.activeAccount$.pipe(
+        filter(account => !!account),
         switchMap(account => {
             const {key, secret} = account;
             return this.getDeals(0, key, secret);

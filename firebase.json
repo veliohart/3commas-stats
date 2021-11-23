@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "bots-stats",
+    "public": "dist/new",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
