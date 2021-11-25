@@ -26,6 +26,13 @@ const sign = (secret: string, url: string, params: any) => {
 
 const DATE_FORMAT = 'MM-DD-YYYY';
 
+export interface FiltersQueryParams {
+    start?: string;
+    end?: string;
+    bots?: number[];
+    coins?: string[];
+}
+
 @Component({
     selector: 'home',
     templateUrl: './home.page.html',
@@ -98,12 +105,11 @@ export class HomePage implements OnInit {
             return Object.keys(coins);
         }),
         tap(_ => {
-            const params: any = this.$route.snapshot.queryParams;
-            console.log('params', params.end, (params.end && dayjs(new Date(params.end), ).toDate()) || null,);
+            const params: FiltersQueryParams = this.$route.snapshot.queryParams;
             this.filters.setValue({
                 start: (params.start && dayjs(params.start, DATE_FORMAT).toDate()) || null,
                 end: (params.end && dayjs(params.end, DATE_FORMAT).toDate()) || null,
-                bots: Array.isArray(params.bots) && params.bots || params.bots && [params.bots] || [],
+                bots: Array.isArray(params.bots) && params.bots.map(bot_id => +bot_id) || params.bots && [+params.bots] || [],
                 coins: Array.isArray(params.coins) && params.coins || params.coins && [params.coins] || []
             });
         }),
