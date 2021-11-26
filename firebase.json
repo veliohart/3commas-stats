@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "bots-stats",
-    "public": "dist/new",
+    "public": "dist/3commas-stats",
     "ignore": [
       "firebase.json",
       "**/.*",
