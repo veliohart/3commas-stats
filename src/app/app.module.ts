@@ -14,6 +14,7 @@ import { AccountsModule } from './services/accounts/accounts.module';
 
 import { HomePage } from './pages/home/home.page';
 import { AccountsPage } from './pages/accounts/accounts.page'; 
+import { interceptor } from './interceptor';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,7 @@ import { AccountsPage } from './pages/accounts/accounts.page';
 
     AccountsModule
   ],
-  providers: [],
+  providers: [interceptor],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

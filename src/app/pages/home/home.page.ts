@@ -1,6 +1,4 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import * as hmacSHA256 from 'crypto-js/hmac-sha256';
-import * as Hex from 'crypto-js/enc-hex';
 import { HttpClient } from "@angular/common/http";
 import Big from 'big.js';
 import * as dayjs from "dayjs";
@@ -10,19 +8,6 @@ import { Tile } from "@angular/material/grid-list/tile-coordinator";
 import { FormControl, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AccountInfo, ACTIVE_ACCOUNT_STREAM } from "src/app/services/accounts/AccountsStorage";
-
-const sign = (secret: string, url: string, params: any) => {
-    const query = Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&');
-    const fullUrl = `${url}?${query}`;
-
-    const hmac = hmacSHA256(fullUrl, secret);
-    const hmacDigest = Hex.stringify(hmac);
-
-    return {
-        url: fullUrl,
-        signature: hmacDigest
-    };
-}
 
 const DATE_FORMAT = 'MM-DD-YYYY';
 
@@ -177,25 +162,16 @@ export class HomePage implements OnInit {
     }
 
     getDeals(offset = 0, key: string, secret: string): any {
-        const {url, signature} = sign(
-            secret,
-            `/public/api/ver1/deals`,
-            {
-                scope: 'finished',
-                order: 'closed_at',
-                limit: 1000,
-                // bot_id: 6139054,
-                // bot_id: 5735570,
-                offset
-            }
-        )
+        const query = Object.entries({
+            scope: 'finished',
+            order: 'closed_at',
+            limit: 1000,
+            // bot_id: 6139054,
+            // bot_id: 5735570,
+            offset
+        }).map(([key, value]) => `${key}=${value}`).join('&');
 
-        return this.$http.get(`${this.BASE_URL}${url}`, {
-            headers: {
-                'APIKEY': key,
-                'Signature': signature
-            }
-        }).pipe(
+        return this.$http.get(`${this.BASE_URL}/public/api/ver1/deals?${query}`).pipe(
             mergeMap((deals: any) => {
                 if (deals.length < 1000) {
                     return of(deals);
