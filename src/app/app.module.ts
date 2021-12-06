@@ -15,11 +15,13 @@ import { AccountsModule } from './services/accounts/accounts.module';
 import { HomePage } from './pages/home/home.page';
 import { AccountsPage } from './pages/accounts/accounts.page'; 
 import { interceptor } from './interceptor';
+import { ChartComponent } from './components/chart/chart';
 
 @NgModule({
   declarations: [
     AppComponent,
     LayoutComponent,
+    ChartComponent,
     
     HomePage,
     AccountsPage

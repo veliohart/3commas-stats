@@ -10,7 +10,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AccountInfo, ACTIVE_ACCOUNT_STREAM } from "src/app/services/accounts/AccountsStorage";
 
 const DATE_FORMAT = 'MM-DD-YYYY';
-
 export interface FiltersQueryParams {
     start?: string;
     end?: string;
@@ -61,8 +60,7 @@ export class HomePage implements OnInit {
     allData$ = this.activeAccount$.pipe(
         filter(account => !!account),
         switchMap(account => {
-            const {key, secret} = account;
-            return this.getDeals(0, key, secret);
+            return this.getDeals(0);
         }),
         share()
     );
@@ -119,15 +117,7 @@ export class HomePage implements OnInit {
                 ];
 
                 return conditions.every(condition => condition);
-            })
-        }),
-        share(),
-        startWith([])
-    )
-
-    profits$: Observable<{ value: number, key: string }[]> = this.data$.pipe(
-        map((_: any) => {
-            const deals = _.map((deal: any) => {
+            }).map((deal: any) => {
                 const { bought_amount, bought_average_price, sold_amount, sold_average_price, bot_id, bot_name, from_currency, to_currency, pair } = deal;
 
                 const base_profit = new Big(bought_amount).minus(new Big(sold_amount)).toString();
@@ -141,7 +131,15 @@ export class HomePage implements OnInit {
                     base_profit,
                     quote_profit
                 }
-            }).reduce((acc: any, deal: any) => {
+            })
+        }),
+        share(),
+        startWith([])
+    )
+
+    profits$: Observable<{ value: number, key: string }[]> = this.data$.pipe(
+        map((_: any) => {
+            const deals = _.reduce((acc: any, deal: any) => {
                 const { from_currency, to_currency, base_profit, quote_profit } = deal;
 
                 return {
@@ -161,27 +159,23 @@ export class HomePage implements OnInit {
         this.filters.patchValue(value);
     }
 
-    getDeals(offset = 0, key: string, secret: string): any {
-        const query = Object.entries({
-            scope: 'finished',
-            order: 'closed_at',
-            limit: 1000,
-            // bot_id: 6139054,
-            // bot_id: 5735570,
-            offset
-        }).map(([key, value]) => `${key}=${value}`).join('&');
+    getDeals(offset = 0): any {
+        const query = Object
+            .entries({ scope: 'finished', order: 'closed_at', limit: 1000, offset })
+            .filter(([, value]) => !!value)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
 
         return this.$http.get(`${this.BASE_URL}/public/api/ver1/deals?${query}`).pipe(
             mergeMap((deals: any) => {
                 if (deals.length < 1000) {
                     return of(deals);
                 } else {
-                    return this.getDeals(offset + 1000, key, secret).pipe(
+                    return this.getDeals(offset + 1000).pipe(
                         map((nextDeals: any) => [...deals, ...nextDeals])
                     )
                 }
             })
         )
     }
-
 }
