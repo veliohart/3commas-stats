@@ -48,7 +48,7 @@ export class HomePage implements OnInit {
     });
 
     ngOnInit() {
-        this.filters.valueChanges.subscribe(filters => {
+        this.filters.valueChanges.subscribe((filters: any) => {
             this.$router.navigate(['.'], { queryParams: {
                 ...filters,
                 start: filters.start && dayjs(filters.start).format(DATE_FORMAT) || undefined,
@@ -62,7 +62,28 @@ export class HomePage implements OnInit {
         filter(account => !!account),
         switchMap(account => {
             const {key, secret} = account;
-            return this.getDeals(0, key, secret);
+            return this.getDeals(0, key, secret).pipe(
+                map((deals: any[]) => {
+                    const result = deals.map((deal: any) => {
+                        const {
+                            localized_status, closed_at, bought_amount, bought_average_price, sold_amount, sold_average_price, bot_id, bot_name, from_currency, to_currency, pair } = deal;
+        
+                        const base_profit = new Big(bought_amount || 0).minus(new Big(sold_amount || 0)).toString();
+                        const quote_profit = new Big(sold_amount || 0)
+                            .mul(new Big(sold_average_price || 0))
+                            .minus( new Big(bought_amount || 0).mul(new Big(bought_average_price || 0)) )
+                            .toString()
+        
+                        return {
+                            bot_id, bot_name, from_currency, to_currency, pair, localized_status, closed_at,
+                            base_profit,
+                            quote_profit
+                        }
+                    });
+
+                    return result;
+                })
+            );
         }),
         share()
     );
@@ -127,21 +148,7 @@ export class HomePage implements OnInit {
 
     profits$: Observable<{ value: number, key: string }[]> = this.data$.pipe(
         map((_: any) => {
-            const deals = _.map((deal: any) => {
-                const { bought_amount, bought_average_price, sold_amount, sold_average_price, bot_id, bot_name, from_currency, to_currency, pair } = deal;
-
-                const base_profit = new Big(bought_amount).minus(new Big(sold_amount)).toString();
-                const quote_profit = new Big(sold_amount)
-                    .mul(new Big(sold_average_price))
-                    .minus( new Big(bought_amount).mul(new Big(bought_average_price)) )
-                    .toString()
-
-                return {
-                    bot_id, bot_name, from_currency, to_currency, pair,
-                    base_profit,
-                    quote_profit
-                }
-            }).reduce((acc: any, deal: any) => {
+            const deals = _.reduce((acc: any, deal: any) => {
                 const { from_currency, to_currency, base_profit, quote_profit } = deal;
 
                 return {

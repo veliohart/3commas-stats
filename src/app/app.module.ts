@@ -4,11 +4,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 import { MaterialModule } from './modules/material.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LayoutComponent } from './components/layout/layout.component';
+import { COMPONENTS } from './components';
 
 import { AccountsModule } from './services/accounts/accounts.module';
 
@@ -19,7 +21,7 @@ import { interceptor } from './interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    LayoutComponent,
+    ...COMPONENTS,
     
     HomePage,
     AccountsPage
@@ -31,6 +33,8 @@ import { interceptor } from './interceptor';
     HttpClientModule,
     AppRoutingModule,
     MaterialModule,
+
+    NgxChartsModule,
 
     AccountsModule
   ],

@@ -67,9 +67,15 @@
                     <mat-icon>clear</mat-icon>
                 </button>
             </mat-card>
-            <mat-card class="stats">
-                at some point here will be some stats
-            </mat-card>
+            <div class="stats">
+                <mat-card>
+                    <deals-spread [data]="data$ | async"></deals-spread>
+                </mat-card>
+    
+                <mat-card>
+                    <profit-spread [data]="data$ | async"></profit-spread>
+                </mat-card>
+            </div>
         </div>
     </div>
 </layout>
